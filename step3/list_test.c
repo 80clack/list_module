@@ -1,4 +1,4 @@
-
+// cool
 /* 
 1;95;0c * list_test.c --- 
  * 
@@ -61,7 +61,8 @@ int main() {
 	lapply(print_car);
 
 	car_t gotten_car = *lget();
-
+	printf("Got car with plate %s\n", gotten_car.plate);
+	
 	lapply(print_car);
 
 	car_t *c3 = make_car("c3",10000.0,2010);
@@ -76,7 +77,8 @@ int main() {
 	char *car3 = "c3";
 	
 	car_t *removed_car = lremove(car3);
-
+	printf("Removed car with plate %s\n", (*removed_car).plate);
+	
 	lapply(print_car);
 	
 	return 0;
