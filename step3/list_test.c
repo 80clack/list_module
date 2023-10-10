@@ -1,6 +1,6 @@
 
 /* 
- * list_test.c --- 
+1;95;0c * list_test.c --- 
  * 
  * Author: Bill Zheng, Daniel Jeon, Dhruv Chandra, Walker Ball
  * Created: 10-09-2023
@@ -11,80 +11,73 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
 #include "list.h"
 
-void test_lput() {
-    car_t car1, car2;
-		int result1, result2;
-
-		strcpy(car1.plate, "ABC123");
-    car1.price = 10000.0;
-    car1.year = 2020;
-
-    strcpy(car2.plate, "XYZ789");
-    car2.price = 15000.0;
-    car2.year = 2021;
-
-    result1 = lput(&car1);
-    result2 = lput(&car2);
-
-    printf("Test lput(): Result1=%d, Result2=%d\n", result1, result2);
+car_t* make_car(char* cplate, double price, int year){                          
+  car_t* cc;                                                                    
+                                                                                
+  if(!(cc = (car_t*)malloc(sizeof(car_t)))){                                    
+    printf("[Error: malloc failed allocating car]\n");                          
+    return NULL;                                                                
+  }                                                                             
+  cc->next = NULL;                                                              
+  strcpy(cc->plate, cplate);                                                    
+  cc->price = price;                                                            
+  cc->year = year;                                                              
+  return cc;                                                                    
 }
 
-void test_lget() {
-    car_t *car1 = lget();
-    car_t *car2 = lget();
+void print_car(car_t *cp){
 
-    printf("Test lget(): Car1 plate=%s, Car2 plate=%s\n",
-           car1 ? car1->plate : "NULL", car2 ? car2->plate : "NULL");
+	if (cp==NULL){
+		printf("List is empty.");
+		return;
+	}
+  printf("Car plate=%s, Price=%.2lf, Year=%d\n",
+				 cp->plate, cp->price, cp->year);
+	
 }
 
-void test_lapply(car_t *cp) {
-
-    void sample_function(car_t *cp) {
-        cp->price += 1000.0;
-    }
-
-    lapply(sample_function);
-
-    printf("Test lapply(): Car plate=%s, Price=%.2lf\n",
-           cp->plate, cp->price);
-}
-
-void test_lremove() {
-
-    car_t *removed_car = lremove("ABC123");
-
-    printf("Test lremove(): Removed Car plate=%s\n",
-           removed_car ? removed_car->plate : "NULL");
+void double_price(car_t *cp){
+	cp->price *= 2.0;
 }
 
 int main() {
     // Initialize your list or list-related resources here
 
-	car_t *c1 = make_car("abc123",20000,2003);
-	car_t *c2 = make_car("c2",40000,2020);
+	car_t *c1 = make_car("c1",20000.0,2003);
 
-	lput(&c1);
-	lput(&c2);
+	car_t *c2 = make_car("c2",40000.0,2020);
 
-	test_lapply(&c1);
+	lput(c1);
+	lapply(print_car);
+	lput(c2);
+	lapply(print_car);
 
+	lapply(double_price);
+	lapply(print_car);
 
+	car_t gotten_car = *lget();
+
+	lapply(print_car);
+
+	car_t *c3 = make_car("c3",10000.0,2010);
+
+	car_t *c4 = make_car("c4",5000.0,2000);
+
+	lput(c3);
+	lput(c4);
+
+	lapply(print_car);
+
+	char *car3 = "c3";
 	
-	//    test_lput();
-	// test_lget();
+	car_t *removed_car = lremove(car3);
 
-	//car_t car_for_apply;
-	//strcpy(car_for_apply.plate, "DEF456");
-	//car_for_apply.price = 12000.0;
-	//car_for_apply.year = 2019;
-
-	//test_lapply(&car_for_apply);
-
-	//test_lremove();
-
-    return 0;
+	lapply(print_car);
+	
+	return 0;
 }

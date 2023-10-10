@@ -38,7 +38,7 @@ int32_t lput(car_t *cp) {
  * return NULL if the list is empty
  */
 car_t *lget() {
-    car_t * temp;
+    car_t *temp;
     if (front == NULL) {
         return NULL;
     }
@@ -64,14 +64,15 @@ void lapply(void (*fn)(car_t *cp)){
 car_t *lremove(char *platep){
     car_t *temp;
     car_t *huff;
-    if (platep == front->plate) {
+
+		if (strcmp(platep, front->plate)==0) {
         return front; //should return a car with its next pointers pointing to other cars?
     }
     else {
         temp = front;
         huff = temp;
         while ((temp=temp->next) != NULL) {
-            if (platep == temp->plate) {
+					if (strcmp(platep, temp->plate)==0) {
                 huff->next = temp->next;
                 return temp; //should return a car with its next pointers pointing to other cars?
             }
@@ -80,18 +81,4 @@ car_t *lremove(char *platep){
     }
     //if car pointer is not returned in the loop
     return NULL;
-}
-
-car_t* make_car(char* cplate, double price, int year){
-	car_t* cc;
-
-	if(!(cc = (car_t*)malloc(sizeof(car_t)))){
-		printf("[Error: malloc failed allocating car]\n");
-		return NULL;
-	}
-	cc->next = NULL;
-	strcpy(cc->plate, cplate);
-	cc->price = price;
-	cc->year = year;
-	return cc;
 }
