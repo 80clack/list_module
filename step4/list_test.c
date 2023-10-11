@@ -1,5 +1,6 @@
+// cool
 /* 
- * list_test.c --- 
+1;95;0c * list_test.c --- 
  * 
  * Author: Bill Zheng, Daniel Jeon, Dhruv Chandra, Walker Ball
  * Created: 10-09-2023
@@ -17,9 +18,7 @@
 
 car_t* make_car(char* cplate, double price, int year){                          
   car_t* cc;                                                                    
-
-	
-	
+                                                                                
   if(!(cc = (car_t*)malloc(sizeof(car_t)))){                                    
     printf("[Error: malloc failed allocating car]\n");                          
     return NULL;                                                                
@@ -27,7 +26,7 @@ car_t* make_car(char* cplate, double price, int year){
   cc->next = NULL;                                                              
   strcpy(cc->plate, cplate);                                                    
   cc->price = price;                                                            
-  cc->year = year;
+  cc->year = year;                                                              
   return cc;                                                                    
 }
 
@@ -54,7 +53,6 @@ int main() {
 	car_t *c2 = make_car("c2",40000.0,2020);
 
 	lput(c1);
-
 	lapply(print_car);
 	lput(c2);
 	lapply(print_car);
@@ -82,11 +80,6 @@ int main() {
 	printf("Removed car with plate %s\n", (*removed_car).plate);
 	
 	lapply(print_car);
-	printf("%ld bytes \n", sizeof(car_t));
-
-	free(c1);
-	free(c2);
-	free(c3);
-	free(c4);
+	
 	return 0;
 }
