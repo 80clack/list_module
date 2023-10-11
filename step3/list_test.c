@@ -1,6 +1,5 @@
-// cool
 /* 
-1;95;0c * list_test.c --- 
+ * list_test.c --- 
  * 
  * Author: Bill Zheng, Daniel Jeon, Dhruv Chandra, Walker Ball
  * Created: 10-09-2023
