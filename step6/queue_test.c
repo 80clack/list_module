@@ -1,8 +1,8 @@
 /* 
- * list_test.c --- 
+ * queue_test.c --- 
  * 
  * Author: Bill Zheng, Daniel Jeon, Dhruv Chandra, Walker Ball
- * Created: 10-09-2023
+ * Created: 10-11-2023
  * Version: 1.0
  * 
  * Description: 
@@ -13,7 +13,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
-#include "list.h"
+#include "queue.h"
 
 car_t* make_car(char* cplate, double price, int year){                          
   car_t* cc;                                                                    
@@ -45,8 +45,9 @@ void double_price(car_t *cp){
 }
 
 int main() {
-    // Initialize your list or list-related resources here
 
+	//change for queue!
+	
 	car_t *c1 = make_car("c1",20000.0,2003);
 
 	car_t *c2 = make_car("c2",40000.0,2020);
