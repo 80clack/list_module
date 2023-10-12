@@ -23,10 +23,11 @@ typedef struct queue{
 
 /* create an empty queue */
 queue_t* qopen(void) {
-	queue_t* queue =  malloc(sizeof(queue_s));
-	queue->front = NULL;
-	queue->back = NULL;//must change the back node to something else once we start putting new nodes
-	return queue;
+    queue_s* queue = malloc(sizeof(struct queue));
+    queue->front = NULL;
+    queue->back = NULL;//must change the back node to something else once we start putting new nodes
+		queue_t* realQueue = (queue_t*) queue;
+    return realQueue;
 }
 
 /* deallocate a queue, frees everything in it */
