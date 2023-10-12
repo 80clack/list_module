@@ -65,8 +65,14 @@ car_t *lremove(char *platep){
     car_t *temp;
     car_t *huff;
 
+    if (front == NULL) {
+        return NULL;
+    }
+		
 		if (strcmp(platep, front->plate)==0) {
-        return front; //should return a car with its next pointers pointing to other cars?
+			temp = front;
+			front = front->next;
+			return temp; //should return a car with its next pointers pointing to other cars?
     }
     else {
         temp = front;
