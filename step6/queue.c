@@ -16,17 +16,18 @@ typedef struct node{
 } node_t;
 
 /* the queue representation is hidden from users of the module */
-struct queue{
-    void* front;
-    void* back;
-} 
+typedef struct queue{
+    node_t* front;
+    node_t* back;
+} queue_s;
 
 /* create an empty queue */
 queue_t* qopen(void) {
-    queue_t* queue = malloc(sizeof(struct queue));
+    queue_s* queue = malloc(sizeof(struct queue));
     queue->front = NULL;
-    queue->back = queue->front;
-    return queue;
+    queue->back = NULL;//must change the back node to something else once we start putting new nodes
+		queue_t* realQueue = (queue_t*) queue;
+    return realQueue;
 }
 
 /* deallocate a queue, frees everything in it */
@@ -49,8 +50,18 @@ void qclose(queue_t *qp){
  */
 int32_t qput(queue_t *qp, void *elementp){
     node_t *new = malloc(sizeof(node_t));
-    if (new->data = elementp) {
-        return 0;
+    if (new) {
+			new->data = elementp;
+			new->next = NULL;
+			if (qp->front == NULL){
+				qp->front = new;
+				qp->back = new;
+			}
+			else{
+				qp->back->next = new;
+				qp->back = new;
+			}
+			return 0;
     }
     //if unsuccessful
     else {
@@ -61,7 +72,7 @@ int32_t qput(queue_t *qp, void *elementp){
 /* get the first first element from queue, removing it from the queue */
 void* qget(queue_t *qp){
     node_t * monke;
-    void data;
+    void data; //?
     if (qp->front == NULL) {
         printf("Error: Nothing in the queue.\n");
         return NULL;
@@ -72,7 +83,7 @@ void* qget(queue_t *qp){
         data = *(monke->data); //review this portion
         free(qp->front->data);
         free(qp->front);
-        return &data;
+				return &data;
     }
 }
 
@@ -132,4 +143,5 @@ void qconcat(queue_t *q1p, queue_t *q2p){
     while (loop != NULL) {
         qput(q1p, qget(q2p));
     }
+		qclose(q2p);
 }

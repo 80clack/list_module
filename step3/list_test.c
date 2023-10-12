@@ -1,6 +1,4 @@
 /* 
- * list_test.c --- 
- * 
  * Author: Bill Zheng, Daniel Jeon, Dhruv Chandra, Walker Ball
  * Created: 10-09-2023
  * Version: 1.0
