@@ -8,6 +8,7 @@
 #include <stdbool.h>
 #include "queue.h"
 #include <stdlib.h>
+#include <stdio.h>
 
 /* must use nodes unless the test has specific nodes that have the variable "next" */
 typedef struct node{
@@ -34,10 +35,10 @@ queue_t* qopen(void) {
 void qclose(queue_t *qp){
     void *monke; //data
     node_t *temp;  //temporary node
-    while (qp->front != NULL) {
-        temp = qp->front;
+    while (((queue_s*)qp)->front != NULL) {
+			temp = ((queue_s*)qp)->front;
         monke = temp->data;
-        qp->front = temp->next;
+        ((queue_s*) qp)->front = temp->next;
         free(monke); //watch out for this; freeing the object or the pointer?
         free(temp); //assuming temp, the node has been allocated for in our add function
         monke = NULL;
@@ -53,13 +54,13 @@ int32_t qput(queue_t *qp, void *elementp){
     if (new) {
 			new->data = elementp;
 			new->next = NULL;
-			if (qp->front == NULL){
-				qp->front = new;
-				qp->back = new;
+			if (((queue_s*)qp)->front == NULL){
+				((queue_s*)qp)->front = new;
+				((queue_s*)qp)->back = new;
 			}
 			else{
-				qp->back->next = new;
-				qp->back = new;
+				((queue_s*)qp)->back->next = new;
+				((queue_s*)qp)->back = new;
 			}
 			return 0;
     }
@@ -73,24 +74,24 @@ int32_t qput(queue_t *qp, void *elementp){
 void* qget(queue_t *qp){
     node_t * monke;
     void data; //?
-    if (qp->front == NULL) {
+    if (((queue_s*)qp)->front == NULL) {
         printf("Error: Nothing in the queue.\n");
         return NULL;
     }
     else {
-        monke = qp->front;
-        qp->front = qp->front->next;
-        data = *(monke->data); //review this portion
-        free(qp->front->data);
-        free(qp->front);
-				return &data;
+			monke = ((queue_s*)qp)->front;
+			((queue_s*)qp)->front = ((queue_s*)qp)->front->next;
+			data = *(monke->data); //review this portion
+			free(qp->front->data);
+			free(((queue_s*)qp)->front);
+			return &data;
     }
 }
 
 /* apply a function to every element of the queue */
 void qapply(queue_t *qp, void (*fn)(void* elementp)){
     node_t temp;
-    for(temp = qp->front; temp != NULL; temp = temp->next){
+    for(temp = ((queue_s*)qp)->front; temp != NULL; temp = temp->next){
         fn(temp->data);
     }
 }
@@ -106,7 +107,7 @@ void qapply(queue_t *qp, void (*fn)(void* elementp)){
  */
 void* qsearch(queue_t *qp, bool (*searchfn)(void* elementp,const void* keyp), const void* skeyp){
     node_t temp;
-    for(temp = qp->front; temp != NULL; temp = temp->next){
+    for(temp = ((queue_s*)qp)->front; temp != NULL; temp = temp->next){
         if (searchfn(temp->data, skeyp)) {
             return temp->data;
         }
