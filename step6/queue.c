@@ -8,6 +8,7 @@
 #include <stdbool.h>
 #include "queue.h"
 #include <stdlib.h>
+#include <stdio.h>
 
 /* must use nodes unless the test has specific nodes that have the variable "next" */
 typedef struct node{
@@ -34,10 +35,10 @@ queue_t* qopen(void) {
 void qclose(queue_t *qp){
     void *monke; //data
     node_t *temp;  //temporary node
-    while (qp->front != NULL) {
-        temp = qp->front;
+    while (((queue_s*)qp)->front != NULL) {
+			temp = ((queue_s*)qp)->front;
         monke = temp->data;
-        qp->front = temp->next;
+        ((queue_s*) qp)->front = temp->next;
         free(monke); //watch out for this; freeing the object or the pointer?
         free(temp); //assuming temp, the node has been allocated for in our add function
         monke = NULL;
@@ -53,13 +54,13 @@ int32_t qput(queue_t *qp, void *elementp){
     if (new) {
 			new->data = elementp;
 			new->next = NULL;
-			if (qp->front == NULL){
-				qp->front = new;
-				qp->back = new;
+			if (((queue_s*)qp)->front == NULL){
+				((queue_s*)qp)->front = new;
+				((queue_s*)qp)->back = new;
 			}
 			else{
-				qp->back->next = new;
-				qp->back = new;
+				((queue_s*)qp)->back->next = new;
+				((queue_s*)qp)->back = new;
 			}
 			return 0;
     }
@@ -71,26 +72,27 @@ int32_t qput(queue_t *qp, void *elementp){
 
 /* get the first first element from queue, removing it from the queue */
 void* qget(queue_t *qp){
-    node_t * monke;
-    void data; //?
-    if (qp->front == NULL) {
+    node_t *monke;
+    void *data; //?
+    if (((queue_s*)qp)->front == NULL) {
         printf("Error: Nothing in the queue.\n");
         return NULL;
     }
     else {
-        monke = qp->front;
-        qp->front = qp->front->next;
-        data = *(monke->data); //review this portion
-        free(qp->front->data);
-        free(qp->front);
-				return &data;
+			monke = ((queue_s*)qp)->front;
+			data = monke->data; //review this portion
+			((queue_s*)qp)->front = monke->next;
+			//	free(qp->front->data);
+			//	free(((queue_s*)qp)->front);
+			free(monke);
+			return data;
     }
 }
 
 /* apply a function to every element of the queue */
 void qapply(queue_t *qp, void (*fn)(void* elementp)){
-    node_t temp;
-    for(temp = qp->front; temp != NULL; temp = temp->next){
+    node_t *temp;
+    for(temp = ((queue_s*)qp)->front; temp != NULL; temp = temp->next){
         fn(temp->data);
     }
 }
@@ -105,8 +107,8 @@ void qapply(queue_t *qp, void (*fn)(void* elementp)){
  * returns a pointer to an element, or NULL if not found
  */
 void* qsearch(queue_t *qp, bool (*searchfn)(void* elementp,const void* keyp), const void* skeyp){
-    node_t temp;
-    for(temp = qp->front; temp != NULL; temp = temp->next){
+    node_t *temp;
+    for(temp = ((queue_s*)qp)->front; temp != NULL; temp = temp->next){
         if (searchfn(temp->data, skeyp)) {
             return temp->data;
         }
@@ -119,17 +121,17 @@ void* qsearch(queue_t *qp, bool (*searchfn)(void* elementp,const void* keyp), co
  * NULL if not found
  */
 void* qremove(queue_t *qp, bool (*searchfn)(void* elementp,const void* keyp), const void* skeyp) {
-    node_t temp;
-    node_t monke;
-    void * data;
-    for(temp = qp->front; temp != NULL; temp = temp->next){
+    node_t *temp;
+    node_t *monke;
+    void *data;
+    for(temp = ((queue_s*)qp)->front; temp != NULL; temp = temp->next){
         if (searchfn(temp->data, skeyp)) {
             monke = temp;
             temp = temp->next;
-            data = *(monke->data); //review this portion
-            free(qp->front->data);
-            free(qp->front);
-            return &data;
+            data = monke->data; //review this portion
+            free(((queue_s*)qp)->front->data);
+            free(((queue_s*)qp)->front);
+            return data;
         }
     }
     return NULL;
@@ -139,9 +141,9 @@ void* qremove(queue_t *qp, bool (*searchfn)(void* elementp,const void* keyp), co
  * q2 is deallocated, closed, and unusable upon completion 
  */
 void qconcat(queue_t *q1p, queue_t *q2p){
-    node_t* loop = q2p->front;
+	node_t* loop = ((queue_s*)q2p)->front;
     while (loop != NULL) {
-        qput(q1p, qget(q2p));
+			qput(q1p, qget(q2p));
     }
 		qclose(q2p);
 }
