@@ -17,15 +17,15 @@ typedef struct node{
 
 /* the queue representation is hidden from users of the module */
 struct queue{
-    void* front;
-    void* back;
+    node_t* front;
+    node_t* back;
 } 
 
 /* create an empty queue */
 queue_t* qopen(void) {
     queue_t* queue = malloc(sizeof(struct queue));
     queue->front = NULL;
-    queue->back = queue->front;
+    queue->back = NULL;//must change the back node to something else once we start putting new nodes
     return queue;
 }
 
@@ -49,8 +49,18 @@ void qclose(queue_t *qp){
  */
 int32_t qput(queue_t *qp, void *elementp){
     node_t *new = malloc(sizeof(node_t));
-    if (new->data = elementp) {
-        return 0;
+    if (new) {
+			new->data = elementp;
+			new->next = NULL;
+			if (qp->front == NULL){
+				qp->front = new;
+				qp->back = new;
+			}
+			else{
+				qp->back->next = new;
+				qp->back = new;
+			}
+			return 0;
     }
     //if unsuccessful
     else {
@@ -61,7 +71,7 @@ int32_t qput(queue_t *qp, void *elementp){
 /* get the first first element from queue, removing it from the queue */
 void* qget(queue_t *qp){
     node_t * monke;
-    void data;
+    void data; //?
     if (qp->front == NULL) {
         printf("Error: Nothing in the queue.\n");
         return NULL;
