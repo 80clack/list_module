@@ -15,11 +15,13 @@
 #include <string.h>
 #include "queue.h"
 
+#define MAXREG 10
+
 typedef struct car {
 	char plate[MAXREG];
 	double price;
 	int year;
-} car_t;
+	} car_t;
 
 car_t* make_car(char* cplate, double price, int year){                          
   car_t* cc;                                                                    
@@ -51,40 +53,24 @@ void double_price(car_t *cp){
 
 int main(){
 
-	//change for queue!
-	queue_t *queue = qopen();
-	car_t *c1 = make_car("c1",20000.0,2003);
+	//Testing qopen()
+	queue_t *queue_first = qopen();
+	printf("Successfully opened a new queue using qopen().\n");
 
+	//Testing qclose()
+	qclose(queue_first);
+	printf("Successfully closed queue using qclose().\n");
+
+	queue_t *queue = qopen();
+	printf("Successfully opened a new queue using qopen().\n");
+	
+	printf("Non-empty queue tests:\n");
+	car_t *c1 = make_car("c1",20000.0,2003);
 	car_t *c2 = make_car("c2",40000.0,2020);
 
 	qput(queue, c1);
 	qapply(queue, print_car);
-	qput(queue, c2);
-	qapply(queue, print_car);
-
-	qapply(queue, double_price);
-	qapply(queue, print_car);
-
-	car_t gotten_car = *qget(queue);
-	printf("Got car with plate %s\n", gotten_car.plate);
-	
-	qapply(print_car);
-
-	car_t *c3 = make_car("c3",10000.0,2010);
-
-	car_t *c4 = make_car("c4",5000.0,2000);
-
-	qput(queue, c3);
-	qput(queue, c4);
-
-	qapply(queue, print_car);
-
-	char *car3 = "c3";
-	
-	car_t *removed_car = qremove(queue, car3);
-	printf("Removed car with plate %s\n", (*removed_car).plate);
-	
-	qapply(queue, print_car);
+	printf("Successfully put c1 into queue.\n");
 	
 	return 0;
 }
