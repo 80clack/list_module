@@ -82,7 +82,7 @@ void* qget(queue_t *qp){
         data = *(monke->data); //review this portion
         free(qp->front->data);
         free(qp->front);
-        return &data;
+				return &data;
     }
 }
 
@@ -142,4 +142,5 @@ void qconcat(queue_t *q1p, queue_t *q2p){
     while (loop != NULL) {
         qput(q1p, qget(q2p));
     }
+		qclose(q2p);
 }
