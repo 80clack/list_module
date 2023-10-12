@@ -15,6 +15,12 @@
 #include <string.h>
 #include "queue.h"
 
+typedef struct car {
+	char plate[MAXREG];
+	double price;
+	int year;
+} car_t;
+
 car_t* make_car(char* cplate, double price, int year){                          
   car_t* cc;                                                                    
                                                                                 
