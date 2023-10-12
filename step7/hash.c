@@ -10,32 +10,58 @@
 
 #define get16bits(d) (*((const uint16_t *) (d)))
 
-/* the queue representation is hidden from users of the module */
-struct hash{
-    queue_t* queue;
-} 
-
 /* hopen -- opens a hash table with initial size hsize */
 hashtable_t *hopen(uint32_t hsize) {
-  hashtable_t* newhash = malloc(sizeof(struct hash));
-  newhash->queue = malloc(sizeof(struct queue));
+  int i; //iterator
+  hashtable_t* newhash = malloc(hsize);
+  //from start mem address to end mem address malloc to give space for queues
+  for (i = 0; i < hsize; i++) {
+    *(newhash+i) = malloc(sizeof(struct queue));
+  }
+  return newhash;
 }
 
 /* hclose -- closes a hash table */
 void hclose(hashtable_t *htp){
-
+  int i = 0; //incrementer
+  while (*(htp+i) != NULL) {
+    qclose(*(htp+i));
+    i++;
+  }
+  free(htp);
 }
 
 /* hput -- puts an entry into a hash table under designated key 
  * returns 0 for success; non-zero otherwise
  */
 int32_t hput(hashtable_t *htp, void *ep, const char *key, int keylen){
+  uint32_t tablesize = countelements(htp);
+  uint32_t index = SuperFastHash(key, keylen, tablesize);
+  qput(*(htp+index), ep);
 
+  return 0;
+}
+
+static int32_t countelements(hashtable_t *htp) {
+  uint32_t tablesize = 0;
+  while (*(htp+i) != NULL) {
+    tablesize++;
+  }
+  return tablesize;
 }
 
 /* happly -- applies a function to every entry in hash table */
 void happly(hashtable_t *htp, void (*fn)(void* ep)){
-
+  int i = 0; //incrementer
+  int j = 0;
+  while (*(htp+i) != NULL) {
+    while ((*(htp+i))->front != NULL) {
+      fn((*(htp+j))->front);
+      j++;
+    }
+    j = 0;
+    i++;
+  }
 }
 
 /* hsearch -- searchs for an entry under a designated key using a
@@ -46,7 +72,19 @@ void *hsearch(hashtable_t *htp,
 	      bool (*searchfn)(void* elementp, const void* searchkeyp), 
 	      const char *key, 
 	      int32_t keylen){
+    uint32_t tablesize = countelements(htp);
+    uint32_t index = SuperFastHash(key, keylen, tablesize);
 
+    while (*(htp+i) != NULL) {
+      while ((*(htp+j))->front != NULL) {
+        if (searchfn((*(htp+i))+j, &index)){
+          return (*(htp+j))->front;
+        }
+      }
+      i++;
+      j = 0;
+    }
+    return NULL;
 }
 
 /* hremove -- removes and returns an entry under a designated key
@@ -57,7 +95,19 @@ void *hremove(hashtable_t *htp,
 	      bool (*searchfn)(void* elementp, const void* searchkeyp), 
 	      const char *key, 
 	      int32_t keylen) {
+    uint32_t tablesize = countelements(htp);
+    uint32_t index = SuperFastHash(key, keylen, tablesize);
 
+      while (*(htp+i) != NULL) {
+        while ((*(htp+j))->front != NULL) {
+          if (searchfn((*(htp+j))->front, &index)) {
+            qremove(*(htp))
+          }
+          j++;
+        }
+        i++;
+        j = 0;
+      }
 }
 
 /* 
