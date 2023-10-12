@@ -27,8 +27,7 @@ car_t* make_car(char* cplate, double price, int year){
   if(!(cc = (car_t*)malloc(sizeof(car_t)))){                                    
     printf("[Error: malloc failed allocating car]\n");                          
     return NULL;                                                                
-  }                                                                             
-  cc->next = NULL;                                                              
+  }                                                               
   strcpy(cc->plate, cplate);                                                    
   cc->price = price;                                                            
   cc->year = year;                                                              
@@ -53,39 +52,39 @@ void double_price(car_t *cp){
 int main() {
 
 	//change for queue!
-	
+	queue_t *queue = qopen();
 	car_t *c1 = make_car("c1",20000.0,2003);
 
 	car_t *c2 = make_car("c2",40000.0,2020);
 
-	lput(c1);
-	lapply(print_car);
-	lput(c2);
-	lapply(print_car);
+	qput(queue, c1);
+	qapply(queue, print_car);
+	qput(queue, c2);
+	qapply(queue, print_car);
 
-	lapply(double_price);
-	lapply(print_car);
+	qapply(queue, double_price);
+	qapply(queue, print_car);
 
-	car_t gotten_car = *lget();
+	car_t gotten_car = *qget(queue);
 	printf("Got car with plate %s\n", gotten_car.plate);
 	
-	lapply(print_car);
+	qapply(print_car);
 
 	car_t *c3 = make_car("c3",10000.0,2010);
 
 	car_t *c4 = make_car("c4",5000.0,2000);
 
-	lput(c3);
-	lput(c4);
+	qput(queue, c3);
+	qput(queue, c4);
 
-	lapply(print_car);
+	qapply(queue, print_car);
 
 	char *car3 = "c3";
 	
-	car_t *removed_car = lremove(car3);
+	car_t *removed_car = qremove(queue, car3);
 	printf("Removed car with plate %s\n", (*removed_car).plate);
 	
-	lapply(print_car);
+	qapply(queue, print_car);
 	
 	return 0;
 }

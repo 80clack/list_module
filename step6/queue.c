@@ -16,17 +16,17 @@ typedef struct node{
 } node_t;
 
 /* the queue representation is hidden from users of the module */
-struct queue{
+typedef struct queue{
     node_t* front;
     node_t* back;
-} 
+} queue_s;
 
 /* create an empty queue */
 queue_t* qopen(void) {
-    queue_t* queue = malloc(sizeof(struct queue));
-    queue->front = NULL;
-    queue->back = NULL;//must change the back node to something else once we start putting new nodes
-    return queue;
+	queue_t* queue =  malloc(sizeof(queue_s));
+	queue->front = NULL;
+	queue->back = NULL;//must change the back node to something else once we start putting new nodes
+	return queue;
 }
 
 /* deallocate a queue, frees everything in it */
