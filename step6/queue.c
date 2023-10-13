@@ -142,8 +142,8 @@ void* qremove(queue_t *qp, bool (*searchfn)(void* elementp,const void* keyp), co
  */
 void qconcat(queue_t *q1p, queue_t *q2p){
 	node_t* loop = ((queue_s*)q2p)->front;
-    while (loop != NULL) {
-			qput(q1p, qget(q2p));
+	while (loop != NULL) {
+		qput((queue_s*)q1p, qget((queue_s*)q2p));
     }
 		qclose(q2p);
 }
