@@ -116,7 +116,7 @@ int32_t hput(hashtable_t *htp, void *ep, const char *key, int keylen){
 void happly(hashtable_t *htp, void (*fn)(void* ep)){
   int i = 0; //incrementer
   while ((((hashtable_s *)htp)+i) != NULL) {
-    qapply(htp+i, fn);
+    qapply((hashtable_t*)(((hashtable_s*)htp)+i), fn);
     i++;
   }
 }
