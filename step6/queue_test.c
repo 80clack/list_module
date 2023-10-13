@@ -67,13 +67,11 @@ int main(){
 	
 	printf("Non-empty queue tests:\n");
 	car_t *c1 = make_car("c1",20000.0,2003);
-	car_t *c2 = make_car("c2",40000.0,2020);
+	//car_t *c2 = make_car("c2",40000.0,2020);
 
 	qput(queue, c1);
 	qapply(queue, print_car);
 	printf("Successfully put c1 into queue.\n");
-
-	
-	
+	qclose(queue);
 	return 0;
 }
