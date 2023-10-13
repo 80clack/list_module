@@ -1,90 +1,55 @@
 /* 
  * hash.c -- implements a generic hash table as an indexed set of queues.
- *
+ *  
  */
 #include <stdint.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include <stdbool.h>
 #include "queue.h"
 #include "hash.h"
 
 #define get16bits(d) (*((const uint16_t *) (d)))
 
+typedef struct hash{
+    uint32_t hsize;
+    queue_t **array;
+} hashtable_s;
+
 /* hopen -- opens a hash table with initial size hsize */
 hashtable_t *hopen(uint32_t hsize) {
   int i; //iterator
-  hashtable_t* newhash = malloc(hsize);
+  queue_t* queue;
+
+  hashtable_s* newhash = (hashtable_s*) malloc(sizeof(hashtable_s));
+  newhash->hsize = hsize;
+  newhash->array = (queue_t **) malloc(hsize * sizeof(queue_t*));
+
   //from start mem address to end mem address malloc to give space for queues
   for (i = 0; i < hsize; i++) {
-    *(newhash+i) = malloc(sizeof(struct queue));
+    queue = qopen();
+    newhash->array[i] = queue; 
   }
-  return newhash;
+  hashtable_t* realhash = (hashtable_t*) newhash;
+  return realhash;
 }
 
 /* hclose -- closes a hash table */
 void hclose(hashtable_t *htp){
   int i = 0; //incrementer
-  while (*(htp+i) != NULL) {
-    qclose(*(htp+i));
+  while ((((hashtable_s *)htp)+i) != NULL) {
+    qclose(htp+i);
     i++;
   }
   free(htp);
 }
-
-/* hput -- puts an entry into a hash table under designated key 
- * returns 0 for success; non-zero otherwise
- */
-int32_t hput(hashtable_t *htp, void *ep, const char *key, int keylen){
-  uint32_t tablesize = countelements(htp);
-  uint32_t index = SuperFastHash(key, keylen, tablesize);
-  qput(*(htp+index), ep);
-
-  return 0;
-}
-
 static int32_t countelements(hashtable_t *htp) {
   uint32_t tablesize = 0;
-  while (*(htp+i) != NULL) {
+  int i = 0;
+  while ((((hashtable_s *)htp)+i) != NULL) {
     tablesize++;
   }
   return tablesize;
-}
-
-/* happly -- applies a function to every entry in hash table */
-void happly(hashtable_t *htp, void (*fn)(void* ep)){
-  int i = 0; //incrementer
-  while (*(htp+i) != NULL) {
-    qapply(*(htp+i), fn);
-    i++;
-  }
-}
-
-/* hsearch -- searchs for an entry under a designated key using a
- * designated search fn -- returns a pointer to the entry or NULL if
- * not found
- */
-void *hsearch(hashtable_t *htp, 
-	      bool (*searchfn)(void* elementp, const void* searchkeyp), 
-	      const char *key, 
-	      int32_t keylen){
-    uint32_t tablesize = countelements(htp);
-    uint32_t index = SuperFastHash(key, keylen, tablesize);
-
-    qsearch(*(htp+index));
-    return NULL;
-}
-
-/* hremove -- removes and returns an entry under a designated key
- * using a designated search fn -- returns a pointer to the entry or
- * NULL if not found
- */
-void *hremove(hashtable_t *htp, 
-	      bool (*searchfn)(void* elementp, const void* searchkeyp), 
-	      const char *key, 
-	      int32_t keylen) {
-    uint32_t tablesize = countelements(htp);
-    uint32_t index = SuperFastHash(key, keylen, tablesize);
-    qremove(*(htp+index));
 }
 
 /* 
@@ -134,5 +99,52 @@ static uint32_t SuperFastHash (const char *data,int len,uint32_t tablesize) {
   hash ^= hash << 25;
   hash += hash >> 6;
   return hash % tablesize;
+}
+
+/* hput -- puts an entry into a hash table under designated key 
+ * returns 0 for success; non-zero otherwise
+ */
+int32_t hput(hashtable_t *htp, void *ep, const char *key, int keylen){
+  uint32_t tablesize = countelements(htp);
+  uint32_t index = SuperFastHash(key, keylen, tablesize);
+  qput(htp+index, ep);
+
+  return 0;
+}
+
+/* happly -- applies a function to every entry in hash table */
+void happly(hashtable_t *htp, void (*fn)(void* ep)){
+  int i = 0; //incrementer
+  while ((((hashtable_s *)htp)+i) != NULL) {
+    qapply(htp+i, fn);
+    i++;
+  }
+}
+
+/* hsearch -- searchs for an entry under a designated key using a
+ * designated search fn -- returns a pointer to the entry or NULL if
+ * not found
+ */
+void *hsearch(hashtable_t *htp, 
+	      bool (*searchfn)(void* elementp, const void* searchkeyp), 
+	      const char *key, 
+	      int32_t keylen){
+    uint32_t tablesize = countelements(htp);
+    uint32_t index = SuperFastHash(key, keylen, tablesize);
+
+    return qsearch(htp+index, searchfn, key);
+}
+
+/* hremove -- removes and returns an entry under a designated key
+ * using a designated search fn -- returns a pointer to the entry or
+ * NULL if not found
+ */
+void *hremove(hashtable_t *htp, 
+	      bool (*searchfn)(void* elementp, const void* searchkeyp), 
+	      const char *key, 
+	      int32_t keylen) {
+    uint32_t tablesize = countelements(htp);
+    uint32_t index = SuperFastHash(key, keylen, tablesize);
+    return qremove(htp+index, searchfn, key);
 }
 
