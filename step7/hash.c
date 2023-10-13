@@ -53,13 +53,8 @@ static int32_t countelements(hashtable_t *htp) {
 /* happly -- applies a function to every entry in hash table */
 void happly(hashtable_t *htp, void (*fn)(void* ep)){
   int i = 0; //incrementer
-  int j = 0;
   while (*(htp+i) != NULL) {
-    while ((*(htp+i))->front != NULL) {
-      fn((*(htp+j))->front);
-      j++;
-    }
-    j = 0;
+    qapply(*(htp+i), fn);
     i++;
   }
 }
@@ -75,15 +70,7 @@ void *hsearch(hashtable_t *htp,
     uint32_t tablesize = countelements(htp);
     uint32_t index = SuperFastHash(key, keylen, tablesize);
 
-    while (*(htp+i) != NULL) {
-      while ((*(htp+j))->front != NULL) {
-        if (searchfn((*(htp+i))+j, &index)){
-          return (*(htp+j))->front;
-        }
-      }
-      i++;
-      j = 0;
-    }
+    qsearch(*(htp+index));
     return NULL;
 }
 
@@ -97,17 +84,7 @@ void *hremove(hashtable_t *htp,
 	      int32_t keylen) {
     uint32_t tablesize = countelements(htp);
     uint32_t index = SuperFastHash(key, keylen, tablesize);
-
-      while (*(htp+i) != NULL) {
-        while ((*(htp+j))->front != NULL) {
-          if (searchfn((*(htp+j))->front, &index)) {
-            qremove(*(htp))
-          }
-          j++;
-        }
-        i++;
-        j = 0;
-      }
+    qremove(*(htp+index));
 }
 
 /* 
