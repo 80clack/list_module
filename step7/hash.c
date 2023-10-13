@@ -3,6 +3,7 @@
  *  
  */
 #include <stdint.h>
+#include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -29,6 +30,7 @@ hashtable_t *hopen(uint32_t hsize) {
   for (i = 0; i < hsize; i++) {
     queue = qopen();
     newhash->array[i] = queue; 
+    printf("%p ", newhash->array[i]);
   }
   hashtable_t* realhash = (hashtable_t*) newhash;
   return realhash;
@@ -36,20 +38,21 @@ hashtable_t *hopen(uint32_t hsize) {
 
 /* hclose -- closes a hash table */
 void hclose(hashtable_t *htp){
-  int i = 0; //incrementer
-  while ((((hashtable_s *)htp)+i) != NULL) {
-    qclose((hashtable_t*)(((hashtable_s*)htp)+i));
-    i++;
+  uint32_t i; //incrementer
+  printf("\n");
+  if (((hashtable_s*)htp)->array != NULL) {
+    for (i=0;i<((hashtable_s*)htp)->hsize;i++) {
+      fflush(stdout);
+      printf("%p ", (((hashtable_s*)htp)->array[i]));
+      fflush(stdout);
+      qclose((((hashtable_s*)htp)->array[i]));
+      fflush(stdout);
+      printf(" ye ");
+      fflush(stdout);
+    }  
+    free(((hashtable_s*)htp)->array);
   }
   free(htp);
-}
-static int32_t countelements(hashtable_t *htp) {
-  uint32_t tablesize = 0;
-  int i = 0;
-  while ((((hashtable_s *)htp)+i) != NULL) {
-    tablesize++;
-  }
-  return tablesize;
 }
 
 /* 
@@ -105,19 +108,21 @@ static uint32_t SuperFastHash (const char *data,int len,uint32_t tablesize) {
  * returns 0 for success; non-zero otherwise
  */
 int32_t hput(hashtable_t *htp, void *ep, const char *key, int keylen){
-  uint32_t tablesize = countelements(htp);
-  uint32_t index = SuperFastHash(key, keylen, tablesize);
-  qput((hashtable_t*)(((hashtable_s*)htp)+index), ep);
-
-  return 0;
+  uint32_t index = SuperFastHash(key, keylen, ((hashtable_s*)htp)->hsize);
+  printf("%d\n", (int) index);
+  if (qput((((hashtable_s*)htp)->array[index]), ep) != 0) {
+    return -1;
+  }
+  else {
+    return 0;
+  }
 }
 
 /* happly -- applies a function to every entry in hash table */
 void happly(hashtable_t *htp, void (*fn)(void* ep)){
-  int i = 0; //incrementer
-  while ((((hashtable_s *)htp)+i) != NULL) {
-    qapply((hashtable_t*)(((hashtable_s*)htp)+i), fn);
-    i++;
+  int i;
+  for (i=0;i<((hashtable_s*)htp)->hsize;i++) { 
+    qapply((hashtable_t*)(((hashtable_s*)htp)->array[i]), fn);
   }
 }
 
@@ -129,10 +134,9 @@ void *hsearch(hashtable_t *htp,
 	      bool (*searchfn)(void* elementp, const void* searchkeyp), 
 	      const char *key, 
 	      int32_t keylen){
-    uint32_t tablesize = countelements(htp);
-    uint32_t index = SuperFastHash(key, keylen, tablesize);
+    uint32_t index = SuperFastHash(key, keylen, ((hashtable_s*)htp)->hsize);
 
-    return qsearch((hashtable_t*)(((hashtable_s*)htp)+index), searchfn, key);
+    return qsearch((hashtable_t*)(((hashtable_s*)htp)->array[index]), searchfn, key);
 }
 
 /* hremove -- removes and returns an entry under a designated key
@@ -143,8 +147,7 @@ void *hremove(hashtable_t *htp,
 	      bool (*searchfn)(void* elementp, const void* searchkeyp), 
 	      const char *key, 
 	      int32_t keylen) {
-    uint32_t tablesize = countelements(htp);
-    uint32_t index = SuperFastHash(key, keylen, tablesize);
-    return qremove((hashtable_t*)(((hashtable_s*)htp)+index), searchfn, key);
+    uint32_t index = SuperFastHash(key, keylen, ((hashtable_s*)htp)->hsize);
+    return qremove((hashtable_t*)(((hashtable_s*)htp)->array[index]), searchfn, key);
 }
 

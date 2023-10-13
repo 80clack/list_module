@@ -36,11 +36,11 @@ void qclose(queue_t *qp){
     void *monke; //data
     node_t *temp;  //temporary node
     while (((queue_s*)qp)->front != NULL) {
-			temp = ((queue_s*)qp)->front;
+		temp = ((queue_s*)qp)->front;
         monke = temp->data;
         ((queue_s*) qp)->front = temp->next;
-        free(monke); //watch out for this; freeing the object or the pointer?
-        free(temp); //assuming temp, the node has been allocated for in our add function
+        free(monke); 
+        free(temp); 
         monke = NULL;
         temp = NULL;
     }
@@ -66,7 +66,7 @@ int32_t qput(queue_t *qp, void *elementp){
     }
     //if unsuccessful
     else {
-        return 1;
+        return -1;
     }
 } 
 
