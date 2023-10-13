@@ -146,14 +146,14 @@ void* qremove(queue_t *qp, bool (*searchfn)(void* elementp,const void* keyp), co
 							data = temp->next->data;
 							monke = temp->next;
 							temp->next = temp->next->next;
-							if (temp->next == NULL)
-								{
+							if (temp->next == NULL){
 									((queue_s*)qp)->back = temp;
-								}
+							}
 						  free(monke);
 							return data;
-						}
-        }
+					    }
+                    }
+            }
     }
     return NULL;
 }
@@ -170,6 +170,6 @@ void qconcat(queue_t *q1p, queue_t *q2p){
 		((queue_s*)q1p)->back->next = ((queue_s*)q2p)->front;
 		((queue_s*)q1p)->back = ((queue_s*)q2p)->back;
 	}
-	free(((queue_s*)qp)->back);
-	free(((queue_s*)qp)->front);
+	free(((queue_s*)q2p)->back);
+	free(((queue_s*)q2p)->front);
 }
