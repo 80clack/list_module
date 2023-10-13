@@ -124,14 +124,30 @@ void* qremove(queue_t *qp, bool (*searchfn)(void* elementp,const void* keyp), co
     node_t *temp;
     node_t *monke;
     void *data;
-    for(temp = ((queue_s*)qp)->front; temp != NULL; temp = temp->next){
-        if (searchfn(temp->data, skeyp)) {
-            monke = temp;
-            temp = temp->next;
-            data = monke->data; //review this portion
-            free(((queue_s*)qp)->front->data);
-            free(((queue_s*)qp)->front);
-            return data;
+		temp = ((queue_s*)qp)->front;
+		if (searchfn(temp->data, skeyp)){
+			data = temp->data;
+			((queue_s*)qp)->front = temp->next;
+			if(((queue_s*)qp)->front == NULL){
+				((queue_s*)qp)->back = NULL;
+			}
+			free(temp);
+			return data;
+		}
+		else{
+			for(temp = ((queue_s*)qp)->front; temp != NULL; temp = temp->next){
+					if (temp->next != NULL){
+						if (searchfn(temp->next->data, skeyp)) {                                                    
+							data = temp->next->data;
+							monke = temp->next;
+							temp->next = temp->next->next;
+							if (temp->next == NULL)
+								{
+									((queue_s*)qp)->back = temp;
+								}
+						  free(monke);
+							return data;
+						}
         }
     }
     return NULL;
@@ -141,9 +157,10 @@ void* qremove(queue_t *qp, bool (*searchfn)(void* elementp,const void* keyp), co
  * q2 is deallocated, closed, and unusable upon completion 
  */
 void qconcat(queue_t *q1p, queue_t *q2p){
-	node_t* loop = ((queue_s*)q2p)->front;
-	while (loop != NULL) {
-		qput((queue_s*)q1p, qget((queue_s*)q2p));
-    }
-	qclose((queue_s*)q2p);
+	if (((queue_s*)q1p)->front == NULL){
+		((queue_s*)q1p)->front = ((queue_s*)q2p)->front;
+		((queue_s*)q1p)->back = ((queue_s*)q2p)->back;
+	}
+	((queue_s*)q1p)->back->next = ((queue_s*)q2p)->front;
+	((queue_s*)q1p)->back = ((queue_s*)q2p)->back;
 }
