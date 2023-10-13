@@ -38,7 +38,7 @@ void qclose(queue_t *qp){
 		temp = ((queue_s*)qp)->front;
         ((queue_s*) qp)->front = temp->next;
         free(temp);
-        temp->data = NULL;
+        //temp->data = NULL;
         temp = NULL;
     }
 }   
