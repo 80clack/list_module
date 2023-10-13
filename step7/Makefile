@@ -1,12 +1,12 @@
 CFLAGS=-Wall -pedantic -std=c11 -I. -g
 
-all:	queue_test
+all:	hash_test
 
 %.o: %.c %.h
 	gcc $(CFLAGS) -c $<
 
-queue_test: queue.o queue_test.o
-	gcc $(CFLAGS) queue.o queue_test.o -o $@
+hash_test: hash.o hash_test.o
+	gcc $(CFLAGS) hash.o hash_test.o -o $@
 
 clean:
-				rm -f *.o queue_test
+	rm -f *.o hash_test
