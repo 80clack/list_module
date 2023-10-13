@@ -170,6 +170,4 @@ void qconcat(queue_t *q1p, queue_t *q2p){
 		((queue_s*)q1p)->back->next = ((queue_s*)q2p)->front;
 		((queue_s*)q1p)->back = ((queue_s*)q2p)->back;
 	}
-	free(((queue_s*)q2p)->back);
-	free(((queue_s*)q2p)->front);
 }
