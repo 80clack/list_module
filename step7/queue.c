@@ -33,15 +33,12 @@ queue_t* qopen(void) {
 
 /* deallocate a queue, frees everything in it */
 void qclose(queue_t *qp){
-    void *monke; //data
     node_t *temp;  //temporary node
     while (((queue_s*)qp)->front != NULL) {
 		temp = ((queue_s*)qp)->front;
-        monke = temp->data;
         ((queue_s*) qp)->front = temp->next;
-        free(monke); 
-        free(temp); 
-        monke = NULL;
+        free(temp);
+        temp->data = NULL;
         temp = NULL;
     }
 }   
@@ -125,10 +122,9 @@ void* qremove(queue_t *qp, bool (*searchfn)(void* elementp,const void* keyp), co
     node_t *monke;
     void *data;
 		temp = ((queue_s*)qp)->front;
-		if (temp == NULL)
-			{
-				return NULL;
-			}
+		if (temp == NULL) {
+			return NULL;
+		}
 		
 		if (searchfn(temp->data, skeyp)){
 			data = temp->data;
@@ -150,7 +146,7 @@ void* qremove(queue_t *qp, bool (*searchfn)(void* elementp,const void* keyp), co
 									((queue_s*)qp)->back = temp;
 							}
 						  free(monke);
-							return data;
+						  return data;
 					    }
                     }
             }

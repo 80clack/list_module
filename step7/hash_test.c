@@ -29,19 +29,22 @@ int main(void) {
     int i = 1;
     char k = 'd';
     int j;
+
     hashtable_t* head = hopen(10);
+
     printf("open complete\n");
     hput(head, &i, "yuh", 3);
-    hput(head, &k, "yuh", 3);
 
     printf("put complete\n");
     happly(head, add_one);
     printf("apply complete\n");
+
     j = *((int *)hsearch(head, searchfn, "yuh", 3));
     printf("finding this integer: %d\n", j);
+        hput(head, &i, "yuh", 3);
+    hput(head, &k, "jeez", 4);
+    happly(head, add_one);
 
-    j = *((int *)hremove(head, searchfn, "yuh", 3));
-    printf("removed this integer: %d\n", j);
     hclose(head);
 
     //edge cases
@@ -52,5 +55,5 @@ int main(void) {
         3) Try with multiple objects (and different types)
         4) Check for collision behavior.
     */
-    return 0;
+   return 0;
 }

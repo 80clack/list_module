@@ -30,7 +30,6 @@ hashtable_t *hopen(uint32_t hsize) {
   for (i = 0; i < hsize; i++) {
     queue = qopen();
     newhash->array[i] = queue; 
-    printf("%p ", newhash->array[i]);
   }
   hashtable_t* realhash = (hashtable_t*) newhash;
   return realhash;
@@ -38,21 +37,19 @@ hashtable_t *hopen(uint32_t hsize) {
 
 /* hclose -- closes a hash table */
 void hclose(hashtable_t *htp){
-  uint32_t i; //incrementer
-  printf("\n");
-  if (((hashtable_s*)htp)->array != NULL) {
-    for (i=0;i<((hashtable_s*)htp)->hsize;i++) {
-      fflush(stdout);
-      printf("%p ", (((hashtable_s*)htp)->array[i]));
-      fflush(stdout);
-      qclose((((hashtable_s*)htp)->array[i]));
-      fflush(stdout);
-      printf(" ye ");
-      fflush(stdout);
-    }  
-    free(((hashtable_s*)htp)->array);
+  if (htp != NULL) {
+    uint32_t i; //incrementer
+    if (((hashtable_s*)htp)->array != NULL) {
+      for (i=0;i<((hashtable_s*)htp)->hsize;i++) {
+        qclose((((hashtable_s*)htp)->array[i]));
+      }
+      free(((hashtable_s*)htp)->array);
+    }
+    free(htp);
   }
-  free(htp);
+  else {
+    printf("Error: there's no hashtable initialized.\n");
+  }
 }
 
 /* 
@@ -109,20 +106,31 @@ static uint32_t SuperFastHash (const char *data,int len,uint32_t tablesize) {
  */
 int32_t hput(hashtable_t *htp, void *ep, const char *key, int keylen){
   uint32_t index = SuperFastHash(key, keylen, ((hashtable_s*)htp)->hsize);
-  printf("%d\n", (int) index);
-  if (qput((((hashtable_s*)htp)->array[index]), ep) != 0) {
-    return -1;
+  if (htp != NULL) {
+    if (qput((((hashtable_s*)htp)->array[index]), ep) != 0) {
+      printf("Error: not successful in putting entry into hashtable.\n");
+      return -1;
+    }
+    else {
+      return 0;
+    }
   }
   else {
-    return 0;
+    printf("Error: not successful in putting entry into hashtable, because htp points to NULL.\n");
+    return -1;
   }
 }
 
 /* happly -- applies a function to every entry in hash table */
 void happly(hashtable_t *htp, void (*fn)(void* ep)){
   int i;
-  for (i=0;i<((hashtable_s*)htp)->hsize;i++) { 
-    qapply((hashtable_t*)(((hashtable_s*)htp)->array[i]), fn);
+  if (htp != NULL){
+    for (i=0;i<((hashtable_s*)htp)->hsize;i++) { 
+      qapply((hashtable_t*)(((hashtable_s*)htp)->array[i]), fn);
+    }
+  }
+  else {
+    printf("error: htp points to NULL.\n");
   }
 }
 
@@ -134,9 +142,14 @@ void *hsearch(hashtable_t *htp,
 	      bool (*searchfn)(void* elementp, const void* searchkeyp), 
 	      const char *key, 
 	      int32_t keylen){
-    uint32_t index = SuperFastHash(key, keylen, ((hashtable_s*)htp)->hsize);
-
-    return qsearch((hashtable_t*)(((hashtable_s*)htp)->array[index]), searchfn, key);
+    if (htp != NULL) {
+      uint32_t index = SuperFastHash(key, keylen, ((hashtable_s*)htp)->hsize);
+      return qsearch((hashtable_t*)(((hashtable_s*)htp)->array[index]), searchfn, key);
+    }
+    else {
+      printf("error: htp points to NULL.\n");
+      return NULL;
+    }
 }
 
 /* hremove -- removes and returns an entry under a designated key
@@ -147,7 +160,13 @@ void *hremove(hashtable_t *htp,
 	      bool (*searchfn)(void* elementp, const void* searchkeyp), 
 	      const char *key, 
 	      int32_t keylen) {
-    uint32_t index = SuperFastHash(key, keylen, ((hashtable_s*)htp)->hsize);
-    return qremove((hashtable_t*)(((hashtable_s*)htp)->array[index]), searchfn, key);
+    if (htp != NULL) {
+      uint32_t index = SuperFastHash(key, keylen, ((hashtable_s*)htp)->hsize);
+      return qremove((hashtable_t*)(((hashtable_s*)htp)->array[index]), searchfn, key);
+    }
+    else {
+      printf("error: htp points to NULL.\n");
+      return NULL;
+    }
 }
 
