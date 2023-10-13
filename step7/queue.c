@@ -27,7 +27,7 @@ queue_t* qopen(void) {
     queue_s* queue = malloc(sizeof(struct queue));
     queue->front = NULL;
     queue->back = NULL;//must change the back node to something else once we start putting new nodes
-		queue_t* realQueue = (queue_t*) queue;
+	queue_t* realQueue = (queue_t*) queue;
     return realQueue;
 }
 
@@ -38,9 +38,10 @@ void qclose(queue_t *qp){
 		temp = ((queue_s*)qp)->front;
         ((queue_s*) qp)->front = temp->next;
         free(temp);
-        //temp->data = NULL;
+        temp->data = NULL;
         temp = NULL;
     }
+
 }   
 
 /* put element at the end of the queue
@@ -125,7 +126,6 @@ void* qremove(queue_t *qp, bool (*searchfn)(void* elementp,const void* keyp), co
 		if (temp == NULL) {
 			return NULL;
 		}
-		
 		if (searchfn(temp->data, skeyp)){
 			data = temp->data;
 			((queue_s*)qp)->front = temp->next;

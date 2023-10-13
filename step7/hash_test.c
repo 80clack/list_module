@@ -27,11 +27,11 @@ bool searchfn(void* elementp, const void* searchkeyp) {
 
 int main(void) {
     int i = 1;
-    char k = 'd';
+    //int k = 3;
     int j;
-
+    //int l;
+    //hashtable_t* headtwo;
     hashtable_t* head = hopen(10);
-
     printf("open complete\n");
     hput(head, &i, "yuh", 3);
 
@@ -41,12 +41,19 @@ int main(void) {
 
     j = *((int *)hsearch(head, searchfn, "yuh", 3));
     printf("finding this integer: %d\n", j);
-        hput(head, &i, "yuh", 3);
-    hput(head, &k, "jeez", 4);
-    happly(head, add_one);
-
     hclose(head);
 
+/*
+    headtwo = hopen(10);
+    printf("open complete again\n");
+    hput(headtwo, &k, "jeez", 4);
+    printf("put complete\n");
+    
+    l = *((int *)hremove(headtwo, searchfn, "jeez", 4));
+    printf("removing this char: %d\n", l);
+
+    hclose(headtwo);
+*/
     //edge cases
     /*
         1) if hashtable_t is empty, run all other functions -- check the requirements on the comments above the functions
