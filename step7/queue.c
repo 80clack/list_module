@@ -125,6 +125,11 @@ void* qremove(queue_t *qp, bool (*searchfn)(void* elementp,const void* keyp), co
     node_t *monke;
     void *data;
 		temp = ((queue_s*)qp)->front;
+		if (temp == NULL)
+			{
+				return NULL;
+			}
+		
 		if (searchfn(temp->data, skeyp)){
 			data = temp->data;
 			((queue_s*)qp)->front = temp->next;
@@ -144,12 +149,12 @@ void* qremove(queue_t *qp, bool (*searchfn)(void* elementp,const void* keyp), co
 							if (temp->next == NULL){
 									((queue_s*)qp)->back = temp;
 							}
-						    free(monke);
-						    return data;
-						}
+						  free(monke);
+							return data;
+					    }
                     }
             }
-        }
+    }
     return NULL;
 }
 
@@ -161,6 +166,10 @@ void qconcat(queue_t *q1p, queue_t *q2p){
 		((queue_s*)q1p)->front = ((queue_s*)q2p)->front;
 		((queue_s*)q1p)->back = ((queue_s*)q2p)->back;
 	}
-	((queue_s*)q1p)->back->next = ((queue_s*)q2p)->front;
-	((queue_s*)q1p)->back = ((queue_s*)q2p)->back;
+	else if (((queue_s*)q1p)->front != NULL && ((queue_s*)q2p)->front != NULL){
+		((queue_s*)q1p)->back->next = ((queue_s*)q2p)->front;
+		((queue_s*)q1p)->back = ((queue_s*)q2p)->back;
+	}
+	free(((queue_s*)q2p)->back);
+	free(((queue_s*)q2p)->front);
 }
