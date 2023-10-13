@@ -145,5 +145,5 @@ void qconcat(queue_t *q1p, queue_t *q2p){
 	while (loop != NULL) {
 		qput((queue_s*)q1p, qget((queue_s*)q2p));
     }
-		qclose(q2p);
+	qclose((queue_s*)q2p);
 }
