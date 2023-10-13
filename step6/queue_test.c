@@ -36,19 +36,20 @@ car_t* make_car(char* cplate, double price, int year){
   return cc;                                                                    
 }
 
-void print_car(car_t *cp){
-
-	if (cp==NULL){
+void print_car(void *cp){
+	car_t* car=(car_t*)cp;
+	if (car==NULL){
 		printf("List is empty.");
 		return;
 	}
   printf("Car plate=%s, Price=%.2lf, Year=%d\n",
-				 cp->plate, cp->price, cp->year);
+				 car->plate, car->price, car->year);
 	
 }
 
-void double_price(car_t *cp){
-	cp->price *= 2.0;
+void double_price(void *cp){
+	car_t* car = (car_t*)cp;
+	car->price *= 2.0;
 }
 
 int main(){
@@ -71,6 +72,8 @@ int main(){
 	qput(queue, c1);
 	qapply(queue, print_car);
 	printf("Successfully put c1 into queue.\n");
+
+	
 	
 	return 0;
 }
