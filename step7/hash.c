@@ -38,7 +38,7 @@ hashtable_t *hopen(uint32_t hsize) {
 void hclose(hashtable_t *htp){
   int i = 0; //incrementer
   while ((((hashtable_s *)htp)+i) != NULL) {
-    qclose(htp+i);
+    qclose((hashtable_t*)(((hashtable_s*)htp)+i));
     i++;
   }
   free(htp);
@@ -107,7 +107,7 @@ static uint32_t SuperFastHash (const char *data,int len,uint32_t tablesize) {
 int32_t hput(hashtable_t *htp, void *ep, const char *key, int keylen){
   uint32_t tablesize = countelements(htp);
   uint32_t index = SuperFastHash(key, keylen, tablesize);
-  qput(htp+index, ep);
+  qput((hashtable_t*)(((hashtable_s*)htp)+index), ep);
 
   return 0;
 }
@@ -132,7 +132,7 @@ void *hsearch(hashtable_t *htp,
     uint32_t tablesize = countelements(htp);
     uint32_t index = SuperFastHash(key, keylen, tablesize);
 
-    return qsearch(htp+index, searchfn, key);
+    return qsearch((hashtable_t*)(((hashtable_s*)htp)+index), searchfn, key);
 }
 
 /* hremove -- removes and returns an entry under a designated key
@@ -145,6 +145,6 @@ void *hremove(hashtable_t *htp,
 	      int32_t keylen) {
     uint32_t tablesize = countelements(htp);
     uint32_t index = SuperFastHash(key, keylen, tablesize);
-    return qremove(htp+index, searchfn, key);
+    return qremove((hashtable_t*)(((hashtable_s*)htp)+index), searchfn, key);
 }
 

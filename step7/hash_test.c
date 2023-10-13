@@ -14,3 +14,9 @@
 #include <stdint.h>
 #include <string.h>
 #include "hash.h"
+
+int main(void) {
+    hashtable_t* head = hopen(10);
+    hclose(head);
+    return 0;
+}
