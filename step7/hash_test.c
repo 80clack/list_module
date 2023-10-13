@@ -27,10 +27,10 @@ bool searchfn(void* elementp, const void* searchkeyp) {
 
 int main(void) {
     int i = 1;
-    //int k = 3;
+
     int j;
-    //int l;
-    //hashtable_t* headtwo;
+		int k;
+
     hashtable_t* head = hopen(10);
     printf("open complete\n");
     hput(head, &i, "yuh", 3);
@@ -41,7 +41,13 @@ int main(void) {
 
     j = *((int *)hsearch(head, searchfn, "yuh", 3));
     printf("finding this integer: %d\n", j);
-    hclose(head);
+
+		hput(head, &i, "ale", 1);
+    k = *((int *)hremove(head, searchfn, "ale", 1));
+    printf("removed this integer: %d\n", k);
+		
+		hclose(head);
+		printf("close complete\n");
 
 /*
     headtwo = hopen(10);
